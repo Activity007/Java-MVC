@@ -125,7 +125,6 @@ public class UI {
                 }
                 case 6 -> {
                     System.out.println(usercontroller.getAllUsers());
-
                     TableView.UserViewTable(userDao.findAll());
                 }
                 case 7 -> {
