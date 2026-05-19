@@ -83,12 +83,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> searchUserByName(String name) {
-        return userDao.findAll()
-                .stream()
-                .filter(user -> user.getName()
-                        .toLowerCase()
-                        .contains(name.toLowerCase()))
-                .map(userMapper::fromUserToUserResponseDto)
-                .toList();
+        return (List<UserResponseDto>) userDao.searchUserByName(name);
     }
 }

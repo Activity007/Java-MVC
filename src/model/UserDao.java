@@ -48,7 +48,7 @@ public class UserDao {
         String sql  = """
                 UPDATE users 
                 SET user_name = ?, email = ?, password = ?, profile = ?
-                WHERE id = ?
+                WHERE uuid = ?
                 """;
         try(Connection connection = DataConnectionConfigure.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -56,7 +56,7 @@ public class UserDao {
             preparedStatement.setString(2,uu.getEmail());
             preparedStatement.setString(3,uu.getPassword());
             preparedStatement.setString(4,uu.getProfile());
-            preparedStatement.setInt(5,uu.getId());
+            preparedStatement.setString(5,uu.getUuid());
 
             int i = preparedStatement.executeUpdate();
             if (i<=0){
@@ -65,6 +65,31 @@ public class UserDao {
             return uu;
         }catch (Exception exception){
             System.out.println("Error update user failed");
+        }
+        return null;
+    }
+    public User searchUserByName(String name){
+        String  sql = """
+                SELECT * FROM users
+                ILIKE ?
+                """;
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DataConnectionConfigure.getConnection()){
+           PreparedStatement preparedStatement = connection.prepareStatement(sql);
+           preparedStatement.setString(1,"% "+ name+"%");
+           ResultSet resultSet = preparedStatement.executeQuery();
+           if(resultSet.next()){
+               int id = resultSet.getInt("id");
+               String uuid = resultSet.getString("uuid");
+               String userName = resultSet.getString("user_name");
+               String email = resultSet.getString("email");
+               String password = resultSet.getString("password");
+               String profile = resultSet.getString("profile");
+               User user = new User(id,uuid,userName,email,password,profile);
+               users.add(user);
+           }
+        }catch (Exception exception){
+            System.out.println("User name not found !");
         }
         return null;
     }
